@@ -1,4 +1,4 @@
-import type { LazyVercelConfig } from '../config.js';
+import type { AVercelConfig } from '../config.js';
 
 /**
  * ENV subcommands where an environment name argument is expected.
@@ -15,7 +15,7 @@ const ENV_SUBCOMMANDS = ['pull', 'add', 'ls', 'rm'];
  */
 export function checkBlockedEnvs(
   args: string[],
-  config: LazyVercelConfig
+  config: AVercelConfig
 ): string | null {
   const blockedEnvs = config.blocked_envs;
   if (!blockedEnvs || Object.keys(blockedEnvs).length === 0) return null;

@@ -64,7 +64,7 @@ async function main(): Promise<void> {
 
 function printHelp(): void {
   console.log(`
-  lazyvercel — opinionated Vercel CLI wrapper
+  avercel — Agent-Vercel: opinionated Vercel CLI wrapper
 
   PATCHES:
     env add        Strips trailing whitespace/newlines from piped stdin
@@ -78,14 +78,14 @@ function printHelp(): void {
     blocked_envs   Block specific environment names in env commands
 
   CONFIG:
-    .lazyvercel/lazyvercel.yaml  (project-level, takes priority)
-    ~/.lazyvercel/lazyvercel.yaml (global fallback)
+    .avercel/avercel.yaml  (project-level, takes priority)
+    ~/.avercel/avercel.yaml (global fallback)
 
   Everything else is forwarded to \`vercel\` as-is.
 `);
 }
 
 main().catch((err: Error) => {
-  console.error('lazyvercel: fatal error:', err.message);
+  console.error('avercel: fatal error:', err.message);
   process.exit(1);
 });

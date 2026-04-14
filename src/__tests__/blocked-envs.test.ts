@@ -5,7 +5,7 @@ import { checkBlockedEnvs } from '../utils/blocked-envs.js';
 describe('checkBlockedEnvs', () => {
   const config = {
     blocked_envs: {
-      preview: "❌ This project uses 'dev' not 'preview'. Use: lazyvercel env pull dev",
+      preview: "❌ This project uses 'dev' not 'preview'. Use: avercel env pull dev",
       staging: '❌ No staging environment configured.',
     },
   };

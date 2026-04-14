@@ -1,13 +1,13 @@
-import type { LazyVercelConfig } from '../config.js';
+import type { AVercelConfig } from '../config.js';
 import { getConfigPaths } from '../config.js';
 
 /**
  * `config [show]` — print the active configuration.
  */
-export function handleConfigShow(config: LazyVercelConfig): void {
+export function handleConfigShow(config: AVercelConfig): void {
   const paths = getConfigPaths();
 
-  console.log('lazyvercel configuration\n');
+  console.log('avercel configuration\n');
 
   console.log('Config files:');
   for (const p of paths) {

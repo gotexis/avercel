@@ -37,8 +37,8 @@ describe('config loading', () => {
 
   it('should parse a valid YAML config', () => {
     // Create a temp config directory
-    const tempDir = join(tmpdir(), `lazyvercel-test-${Date.now()}`);
-    const configDir = join(tempDir, '.lazyvercel');
+    const tempDir = join(tmpdir(), `avercel-test-${Date.now()}`);
+    const configDir = join(tempDir, '.avercel');
     mkdirSync(configDir, { recursive: true });
 
     const configContent = `
@@ -47,7 +47,7 @@ disabled:
 blocked_envs:
   preview: "Use dev instead"
 `;
-    writeFileSync(join(configDir, 'lazyvercel.yaml'), configContent);
+    writeFileSync(join(configDir, 'avercel.yaml'), configContent);
 
     // We can't easily test loadConfig with a custom cwd,
     // but we verify the YAML parsing by checking yaml.load works

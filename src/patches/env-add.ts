@@ -26,7 +26,7 @@ export async function handleEnvAdd(args: string[]): Promise<number> {
   if (rawValue !== cleanValue) {
     const stripped = rawValue.length - cleanValue.length;
     console.error(
-      `lazyvercel: stripped ${stripped} trailing whitespace/newline character(s) from piped input`
+      `avercel: stripped ${stripped} trailing whitespace/newline character(s) from piped input`
     );
   }
 
@@ -41,7 +41,7 @@ export async function handleEnvAdd(args: string[]): Promise<number> {
     child.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'ENOENT') {
         console.error(
-          'lazyvercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
+          'avercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
         );
         resolve(127);
       } else {
@@ -69,7 +69,7 @@ function passthroughEnvAdd(args: string[]): Promise<number> {
     child.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'ENOENT') {
         console.error(
-          'lazyvercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
+          'avercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
         );
         resolve(127);
       } else {

@@ -14,5 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `env check` command — audits env vars via Vercel API for trailing whitespace
 - Environment aliases — map custom names to Vercel environment names in config
 - Disabled commands — block specific commands with custom error messages
-- Config file support — project-level and global `.lazyvercel/lazyvercel.yaml`
+- Config file support — project-level and global `.avercel/avercel.yaml`
 - `config show` command — print active configuration

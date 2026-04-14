@@ -1,4 +1,4 @@
-import type { LazyVercelConfig } from '../config.js';
+import type { AVercelConfig } from '../config.js';
 
 /**
  * Check if a command is disabled via config.
@@ -10,7 +10,7 @@ import type { LazyVercelConfig } from '../config.js';
 export function isDisabled(
   command: string,
   args: string[],
-  config: LazyVercelConfig
+  config: AVercelConfig
 ): string | null {
   const disabled = config.disabled;
   if (!disabled || Object.keys(disabled).length === 0) return null;

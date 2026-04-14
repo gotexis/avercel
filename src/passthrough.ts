@@ -15,7 +15,7 @@ export function passthrough(args: string[]): Promise<number> {
     child.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'ENOENT') {
         console.error(
-          'lazyvercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
+          'avercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
         );
         resolve(127);
       } else {

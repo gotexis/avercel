@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for lazyvercel
+about: Suggest a new feature for avercel
 title: "[Feature] "
 labels: enhancement
 assignees: ''
@@ -12,7 +12,7 @@ What problem does this solve? What's annoying about the current behavior?
 
 ## Proposed Solution
 
-How should lazyvercel handle this?
+How should avercel handle this?
 
 ## Alternatives Considered
 

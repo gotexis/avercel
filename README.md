@@ -1,10 +1,10 @@
-# lazyvercel
+# avercel
 
-[![npm version](https://img.shields.io/npm/v/lazyvercel)](https://www.npmjs.com/package/lazyvercel)
+[![npm version](https://img.shields.io/npm/v/avercel)](https://www.npmjs.com/package/avercel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/gotexis/lazyvercel/actions/workflows/ci.yml/badge.svg)](https://github.com/gotexis/lazyvercel/actions/workflows/ci.yml)
+[![CI](https://github.com/gotexis/avercel/actions/workflows/ci.yml/badge.svg)](https://github.com/gotexis/avercel/actions/workflows/ci.yml)
 
-> An opinionated Vercel CLI wrapper that fixes the things that drive you crazy.
+> Agent-Vercel: an opinionated Vercel CLI wrapper that fixes the things that drive you crazy.
 
 ## The Problem
 
@@ -20,7 +20,7 @@ echo "sk-abc123" | vercel env add SECRET_KEY production
 
 Or maybe you've accidentally run `vercel deploy` and bypassed your entire CI/CD pipeline. Or your team keeps using `preview` when the project convention is `dev`.
 
-**lazyvercel** wraps the official Vercel CLI and fixes all of this.
+**avercel** wraps the official Vercel CLI and fixes all of this.
 
 ## Features
 
@@ -33,27 +33,27 @@ Or maybe you've accidentally run `vercel deploy` and bypassed your entire CI/CD 
 ## Installation
 
 ```bash
-npm install -g lazyvercel
+npm install -g avercel
 ```
 
 Requires Node.js ≥ 18 and `vercel` CLI installed.
 
 ## Usage
 
-Use `lazyvercel` exactly like you'd use `vercel`:
+Use `avercel` exactly like you'd use `vercel`:
 
 ```bash
 # These just work — forwarded to vercel as-is
-lazyvercel dev
-lazyvercel ls
-lazyvercel domains ls
+avercel dev
+avercel ls
+avercel domains ls
 
 # This is the magic — trailing newline stripped automatically
-echo "sk-abc123" | lazyvercel env add SECRET_KEY production
-# → "lazyvercel: stripped 1 trailing whitespace/newline character(s) from piped input"
+echo "sk-abc123" | avercel env add SECRET_KEY production
+# → "avercel: stripped 1 trailing whitespace/newline character(s) from piped input"
 
 # Audit existing env vars
-lazyvercel env check
+avercel env check
 # → ⚠️  Found 2 env var(s) with trailing whitespace/newlines:
 #    Variable                      Targets                  Problem
 #    ────────────────────────────────────────────────────────────────
@@ -61,17 +61,17 @@ lazyvercel env check
 #    SECRET_KEY                    production               trailing whitespace
 
 # Blocked environment names show a helpful error
-lazyvercel env pull preview
-# → ❌ This project uses 'dev' not 'preview'. Use: lazyvercel env pull dev
+avercel env pull preview
+# → ❌ This project uses 'dev' not 'preview'. Use: avercel env pull dev
 
 # Blocked commands show your custom message
-lazyvercel deploy
+avercel deploy
 # → ❌ Do not use `vercel deploy`. Push to GitHub and let the integration handle it.
 ```
 
 ## Configuration
 
-Create `.lazyvercel/lazyvercel.yaml` in your project root (or `~/.lazyvercel/lazyvercel.yaml` for global config). Project config overrides global.
+Create `.avercel/avercel.yaml` in your project root (or `~/.avercel/avercel.yaml` for global config). Project config overrides global.
 
 ```yaml
 # Block commands with custom messages
@@ -80,15 +80,15 @@ disabled:
   build: "❌ Do not use `vercel build`. Vercel builds automatically on deploy."
 
 # Block specific environment names in env commands
-# When someone runs `lazyvercel env pull preview`, they get a loud error with guidance
+# When someone runs `avercel env pull preview`, they get a loud error with guidance
 blocked_envs:
-  preview: "❌ This project uses 'dev' not 'preview'. Use: lazyvercel env pull dev"
+  preview: "❌ This project uses 'dev' not 'preview'. Use: avercel env pull dev"
 ```
 
 View active config:
 
 ```bash
-lazyvercel config
+avercel config
 ```
 
 ### `disabled`
@@ -108,7 +108,7 @@ Block specific environment names in `env pull`, `env add`, `env ls`, and `env rm
 
 ```yaml
 blocked_envs:
-  preview: "❌ Use 'dev' not 'preview'. Run: lazyvercel env pull dev"
+  preview: "❌ Use 'dev' not 'preview'. Run: avercel env pull dev"
   staging: "❌ No staging environment. Use 'production' or 'dev'."
 ```
 
@@ -118,10 +118,10 @@ Audits all environment variables in your Vercel project for trailing whitespace 
 
 ```bash
 # Uses .vercel/project.json for project ID (run `vercel link` first)
-lazyvercel env check
+avercel env check
 
 # Or specify explicitly
-lazyvercel env check --project prj_abc123 --token tkn_xyz
+avercel env check --project prj_abc123 --token tkn_xyz
 ```
 
 Token sources (in order):
@@ -133,7 +133,7 @@ Token sources (in order):
 
 ```
 ┌─────────────────┐
-│   lazyvercel    │
+│     avercel     │
 │                 │
 │  1. Load config │
 │  2. Check if    │

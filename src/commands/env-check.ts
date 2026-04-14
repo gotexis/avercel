@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import https from 'node:https';
-import type { LazyVercelConfig } from '../config.js';
+import type { AVercelConfig } from '../config.js';
 
 interface EnvVar {
   key: string;
@@ -23,7 +23,7 @@ interface VercelProjectJson {
  */
 export async function handleEnvCheck(
   args: string[],
-  _config: LazyVercelConfig
+  _config: AVercelConfig
 ): Promise<number> {
   // Parse flags
   let token = process.env['VERCEL_TOKEN'] ?? '';
@@ -50,7 +50,7 @@ export async function handleEnvCheck(
 
   if (!token) {
     console.error(
-      'lazyvercel env check: No Vercel token found.\n' +
+      'avercel env check: No Vercel token found.\n' +
         'Provide one via --token, VERCEL_TOKEN env var, or ~/.vercel_token file.'
     );
     return 1;
@@ -74,7 +74,7 @@ export async function handleEnvCheck(
 
   if (!projectId) {
     console.error(
-      'lazyvercel env check: No project ID found.\n' +
+      'avercel env check: No project ID found.\n' +
         'Provide one via --project flag or link with `vercel link`.'
     );
     return 1;
@@ -142,12 +142,12 @@ export async function handleEnvCheck(
     }
 
     console.log(
-      `\nFix: Use \`lazyvercel env add\` with piped input — it auto-strips trailing whitespace.`
+      `\nFix: Use \`avercel env add\` with piped input — it auto-strips trailing whitespace.`
     );
     return 1;
   } catch (err) {
     console.error(
-      'lazyvercel env check: API error:',
+      'avercel env check: API error:',
       err instanceof Error ? err.message : err
     );
     return 1;

@@ -1,4 +1,4 @@
-# Contributing to lazyvercel
+# Contributing to avercel
 
 Thanks for your interest in contributing! 🎉
 
@@ -45,7 +45,7 @@ src/
 
 1. **Zero runtime deps** (except `js-yaml` for config)
 2. **Full passthrough fidelity** — stdin/stdout/stderr/exit code must be preserved
-3. **Don't break workflows** — if lazyvercel doesn't patch it, it should behave identically to `vercel`
+3. **Don't break workflows** — if avercel doesn't patch it, it should behave identically to `vercel`
 4. **Explicit > magic** — config file makes behavior visible and team-shareable
 
 ## Versioning

@@ -1,10 +1,10 @@
 {
-  "name": "lazyvercel",
+  "name": "avercel",
   "version": "0.1.0",
-  "description": "Opinionated Vercel CLI wrapper — patches env quirks, adds env auditing, blocked environments, and command guardrails",
+  "description": "Agent-Vercel: opinionated Vercel CLI wrapper — patches env quirks, adds env auditing, blocked environments, and command guardrails",
   "main": "dist/index.js",
   "bin": {
-    "lazyvercel": "dist/index.js"
+    "avercel": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -24,12 +24,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gotexis/lazyvercel.git"
+    "url": "git+https://github.com/gotexis/avercel.git"
   },
   "bugs": {
-    "url": "https://github.com/gotexis/lazyvercel/issues"
+    "url": "https://github.com/gotexis/avercel/issues"
   },
-  "homepage": "https://github.com/gotexis/lazyvercel#readme",
+  "homepage": "https://github.com/gotexis/avercel#readme",
   "engines": {
     "node": ">=18"
   },

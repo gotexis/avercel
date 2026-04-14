@@ -8,3 +8,4 @@ tsconfig.json
 .gitignore
 CONTRIBUTING.md
 CHANGELOG.md
+docs/

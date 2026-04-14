@@ -1,6 +1,6 @@
 {
   "name": "avercel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent-Vercel: opinionated Vercel CLI wrapper — patches env quirks, adds env auditing, blocked environments, and command guardrails",
   "main": "dist/index.js",
   "bin": {
@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/exisz/avercel/issues"
   },
-  "homepage": "https://github.com/exisz/avercel#readme",
+  "homepage": "https://exisz.github.io/avercel/",
   "engines": {
     "node": ">=18"
   },

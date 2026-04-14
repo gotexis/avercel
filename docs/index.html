@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>avercel — Agent-Vercel: the Vercel CLI that fights back</title>
+  <meta name="description" content="avercel: an opinionated Vercel CLI wrapper that sanitizes env vars, blocks dangerous commands, and enforces workflow conventions.">
+  <meta property="og:title" content="avercel — Agent-Vercel">
+  <meta property="og:description" content="The Vercel CLI that fights back. Env sanitization, command guardrails, workflow enforcement.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://exisz.github.io/avercel/">
+  <meta property="og:image" content="https://exisz.github.io/avercel/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="avercel — Agent-Vercel">
+  <meta name="twitter:description" content="The Vercel CLI that fights back. Env sanitization, command guardrails, workflow enforcement.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --fg-dim: #888;
+      --fg-muted: #666;
+      --accent: #0070F3;
+      --accent-hover: #0060df;
+      --surface: #111;
+      --surface-border: #222;
+      --code-bg: #0a0a0a;
+      --green: #50e3c2;
+      --red: #ee5050;
+      --yellow: #f5a623;
+      --radius: 12px;
+      --max-width: 1100px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+    nav .nav-links { display: flex; gap: 24px; }
+    nav .nav-links a { color: var(--fg-dim); font-size: 14px; transition: color .2s; }
+    nav .nav-links a:hover { color: var(--fg); text-decoration: none; }
+
+    /* ===== SECTIONS ===== */
+    section {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      color: var(--fg-dim);
+      font-size: 18px;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 56px;
+    }
+
+    .hero .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      color: var(--fg-dim);
+      margin-bottom: 32px;
+    }
+    .hero .badge .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 10vw, 96px);
+      font-weight: 800;
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .hero h1 .accent { color: var(--accent); }
+
+    .hero .tagline {
+      font-size: clamp(18px, 3vw, 24px);
+      color: var(--fg-dim);
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    .install-cmd {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 15px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .install-cmd:hover { border-color: var(--accent); }
+    .install-cmd .prompt { color: var(--fg-muted); user-select: none; }
+    .install-cmd .copy-btn {
+      background: none; border: none;
+      color: var(--fg-dim);
+      cursor: pointer;
+      padding: 4px;
+      transition: color .2s;
+      display: flex;
+    }
+    .install-cmd .copy-btn:hover { color: var(--accent); }
+    .install-cmd .copy-btn.copied { color: var(--green); }
+
+    /* ===== PROBLEM ===== */
+    .problem-section { background: var(--surface); }
+    .problem-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    .terminal {
+      background: var(--code-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 32px;
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #1a1a1a;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .terminal-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red { background: #ff5f57; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #28c840; }
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+    .terminal-body {
+      padding: 20px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .terminal-body .comment { color: var(--fg-muted); }
+    .terminal-body .cmd { color: var(--fg); }
+    .terminal-body .cmd .bin { color: var(--green); }
+    .terminal-body .output { color: var(--fg-dim); }
+    .terminal-body .error { color: var(--red); }
+    .terminal-body .highlight { color: var(--yellow); }
+    .terminal-body .cursor {
+      display: inline-block;
+      width: 8px; height: 16px;
+      background: var(--fg);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ===== SOLUTION (BEFORE/AFTER) ===== */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 32px;
+    }
+    @media (max-width: 768px) {
+      .comparison { grid-template-columns: 1fr; }
+    }
+    .comparison-card {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .comparison-card.before { border-color: rgba(238,80,80,0.3); }
+    .comparison-card.after { border-color: rgba(80,227,194,0.3); }
+    .comparison-header {
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .comparison-card.before .comparison-header { background: rgba(238,80,80,0.1); color: var(--red); }
+    .comparison-card.after .comparison-header { background: rgba(80,227,194,0.1); color: var(--green); }
+    .comparison-body {
+      padding: 20px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      background: var(--code-bg);
+    }
+
+    /* ===== FEATURES ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      color: var(--fg-dim);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== CONFIG ===== */
+    .config-block {
+      margin-top: 32px;
+    }
+    .config-block .terminal { max-width: 700px; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--surface-border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    footer .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer .footer-links { display: flex; gap: 24px; }
+    footer .footer-links a { color: var(--fg-dim); font-size: 14px; }
+    footer .footer-links a:hover { color: var(--fg); }
+    footer .copyright { color: var(--fg-muted); font-size: 13px; }
+
+    /* ===== FADE IN ===== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      nav .nav-links { display: none; }
+      .hero h1 { letter-spacing: -2px; }
+      .features-grid { grid-template-columns: 1fr; }
+      footer .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="logo">avercel</div>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#config">Config</a>
+        <a href="https://github.com/exisz/avercel">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">
+      <span class="dot"></span>
+      v0.2.0 — now with takeover mode
+    </div>
+    <h1><span class="accent">a</span>vercel</h1>
+    <p class="tagline">The Vercel CLI that fights back.<br>Env sanitization. Command guardrails. Workflow enforcement.</p>
+    <div class="install-cmd" onclick="copyInstall(this)">
+      <span class="prompt">$</span>
+      <span>npm i -g avercel</span>
+      <button class="copy-btn" aria-label="Copy install command">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="problem-section">
+    <div class="problem-inner fade-in">
+      <div class="section-label">The Problem</div>
+      <h2>Trailing newlines are destroying your deploys</h2>
+      <p class="subtitle">
+        You pipe a secret into <code>vercel env add</code>. It silently appends <code>\n</code>.
+        Your app breaks. Vercel shows no error. You question your career choices.
+      </p>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">Terminal — oh no</span>
+        </div>
+        <div class="terminal-body">
+          <div class="comment"># This looks fine...</div>
+          <div class="cmd"><span class="bin">echo</span> "sk-abc123" | <span class="bin">vercel</span> env add SECRET_KEY production</div>
+          <div class="output">✓ Added environment variable SECRET_KEY</div>
+          <br>
+          <div class="comment"># 45 minutes of debugging later...</div>
+          <div class="cmd"><span class="bin">vercel</span> env pull .env</div>
+          <div class="cmd"><span class="bin">xxd</span> .env | <span class="bin">grep</span> SECRET</div>
+          <div class="output">0000: 534b 2d61 6263 3132 33<span class="highlight">0a</span>  sk-abc123<span class="error">.</span></div>
+          <br>
+          <div class="error">← that 0a is a trailing newline. your API key is broken.</div>
+          <div class="cursor"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section id="solution" class="fade-in">
+    <div class="section-label">The Fix</div>
+    <h2>Drop-in replacement. Zero config.</h2>
+    <p class="subtitle">avercel wraps the official Vercel CLI and patches the sharp edges. Same commands, no surprises.</p>
+    <div class="comparison">
+      <div class="comparison-card before">
+        <div class="comparison-header">❌ Before (vercel)</div>
+        <div class="comparison-body">
+          <div style="color:#888">$ echo "sk-abc123" | vercel env add</div>
+          <div style="color:#888"># Silently stores "sk-abc123\n"</div>
+          <div style="color:#888"># App breaks in production</div>
+          <div style="color:#888"># No warning. No error.</div>
+          <br>
+          <div style="color:#ee5050"># 🔥 Deploy breaks</div>
+          <div style="color:#ee5050"># 🕐 45 min debugging</div>
+          <div style="color:#ee5050"># 😤 Career crisis</div>
+        </div>
+      </div>
+      <div class="comparison-card after">
+        <div class="comparison-header">✅ After (avercel)</div>
+        <div class="comparison-body">
+          <div style="color:#888">$ echo "sk-abc123" | avercel env add</div>
+          <div style="color:#50e3c2">⚠ Stripped trailing whitespace from stdin</div>
+          <div style="color:#888"># Stores clean "sk-abc123"</div>
+          <div style="color:#888"># App works perfectly</div>
+          <br>
+          <div style="color:#50e3c2"># ✅ Deploy works</div>
+          <div style="color:#50e3c2"># ✅ Zero debugging</div>
+          <div style="color:#50e3c2"># ✅ Career saved</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="fade-in">
+    <div class="section-label">Features</div>
+    <h2>Everything vercel should have been</h2>
+    <p class="subtitle">Sensible defaults. Guard rails. Audit tools. All in a transparent wrapper.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧹</div>
+        <h3>Env Sanitization</h3>
+        <p>Automatically strips trailing whitespace and newlines from piped stdin on <code>env add</code>. No more invisible characters breaking your secrets.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Env Check</h3>
+        <p>Run <code>avercel env check</code> to audit all environment variables across all targets for trailing whitespace. Find the problems before they find you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚫</div>
+        <h3>Disabled Commands</h3>
+        <p>Block dangerous commands like <code>deploy</code> with custom error messages. Enforce CI/CD pipelines — no more cowboy deploys.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛑</div>
+        <h3>Blocked Environments</h3>
+        <p>Block specific environment names with guidance messages. Prevent <code>preview</code> when your team uses <code>dev</code>.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Takeover Mode</h3>
+        <p>Run <code>avercel takeover</code> to replace the global <code>vercel</code> command with avercel. One command — every <code>vercel</code> call now goes through avercel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Agent-Ready</h3>
+        <p>Bundled AgentSkill for AI coding agents. Your AI teammate knows how to use avercel out of the box. No hallucinated flags.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install" class="fade-in">
+    <div class="section-label">Get Started</div>
+    <h2>Install in 10 seconds</h2>
+    <p class="subtitle">avercel bundles Vercel CLI as a dependency — no separate install needed.</p>
+    <div class="install-cmd" onclick="copyInstall(this)" style="margin-top: 32px;">
+      <span class="prompt">$</span>
+      <span>npm i -g avercel</span>
+      <button class="copy-btn" aria-label="Copy install command">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+    </div>
+    <div style="margin-top: 24px; color: var(--fg-dim); font-size: 14px;">
+      Then just use <code style="color: var(--green);">avercel</code> instead of <code>vercel</code>. All commands pass through. Or run <code style="color: var(--accent);">avercel takeover</code> to replace <code>vercel</code> globally.
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="config" class="fade-in">
+    <div class="section-label">Configuration</div>
+    <h2>Optional, but powerful</h2>
+    <p class="subtitle">Zero config by default. Add <code>.avercel/avercel.yaml</code> to your project when you need guardrails.</p>
+    <div class="config-block">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">.avercel/avercel.yaml</span>
+        </div>
+        <div class="terminal-body">
+<pre style="margin:0;color:var(--fg-dim)"><span style="color:var(--accent)"># Block dangerous commands</span>
+<span style="color:var(--fg)">disabled_commands:</span>
+  <span style="color:var(--fg)">deploy:</span> <span style="color:var(--yellow)">"Use CI/CD pipeline instead: git push origin main"</span>
+  <span style="color:var(--fg)">promote:</span> <span style="color:var(--yellow)">"Promotions are handled by the release workflow"</span>
+
+<span style="color:var(--accent)"># Block wrong environment names</span>
+<span style="color:var(--fg)">blocked_envs:</span>
+  <span style="color:var(--fg)">preview:</span> <span style="color:var(--yellow)">"This project uses 'dev', not 'preview'"</span>
+  <span style="color:var(--fg)">staging:</span> <span style="color:var(--yellow)">"We don't have a staging env. Use 'preview' or 'production'"</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://github.com/exisz/avercel">GitHub</a>
+        <a href="https://www.npmjs.com/package/avercel">npm</a>
+        <a href="https://github.com/exisz/avercel/issues">Issues</a>
+      </div>
+      <div class="copyright">
+        MIT License · Built by <a href="https://github.com/exisz">exisz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Copy install command
+    function copyInstall(el) {
+      navigator.clipboard.writeText('npm i -g avercel').then(() => {
+        const btn = el.querySelector('.copy-btn');
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        }, 2000);
+      });
+    }
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>

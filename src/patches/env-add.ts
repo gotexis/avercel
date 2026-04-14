@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { findVercelBin, vercelSpawnArgs } from '../utils/find-vercel-bin.js';
 
 /**
  * Patched `env add` command.
@@ -32,7 +33,10 @@ export async function handleEnvAdd(args: string[]): Promise<number> {
 
   // Forward to vercel with cleaned stdin
   return new Promise((resolve, reject) => {
-    const child = spawn('vercel', args, {
+    const vercelBin = findVercelBin();
+    const { command, args: spawnArgs } = vercelSpawnArgs(vercelBin, args);
+
+    const child = spawn(command, spawnArgs, {
       stdio: ['pipe', 'inherit', 'inherit'],
       env: process.env,
       shell: false,
@@ -41,7 +45,7 @@ export async function handleEnvAdd(args: string[]): Promise<number> {
     child.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'ENOENT') {
         console.error(
-          'avercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
+          'avercel: `vercel` CLI not found. Install it with `npm i -g avercel` (vercel is bundled).'
         );
         resolve(127);
       } else {
@@ -60,7 +64,10 @@ export async function handleEnvAdd(args: string[]): Promise<number> {
 
 function passthroughEnvAdd(args: string[]): Promise<number> {
   return new Promise((resolve, reject) => {
-    const child = spawn('vercel', args, {
+    const vercelBin = findVercelBin();
+    const { command, args: spawnArgs } = vercelSpawnArgs(vercelBin, args);
+
+    const child = spawn(command, spawnArgs, {
       stdio: 'inherit',
       env: process.env,
       shell: false,
@@ -69,7 +76,7 @@ function passthroughEnvAdd(args: string[]): Promise<number> {
     child.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'ENOENT') {
         console.error(
-          'avercel: `vercel` CLI not found. Install it with `npm i -g vercel`.'
+          'avercel: `vercel` CLI not found. Install it with `npm i -g avercel` (vercel is bundled).'
         );
         resolve(127);
       } else {

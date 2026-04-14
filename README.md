@@ -36,7 +36,30 @@ Or maybe you've accidentally run `vercel deploy` and bypassed your entire CI/CD 
 npm install -g avercel
 ```
 
-Requires Node.js ≥ 18 and `vercel` CLI installed.
+Requires Node.js ≥ 18. The `vercel` CLI is bundled as a dependency — no separate install needed.
+
+## Takeover Mode
+
+Want `avercel` to completely replace `vercel`?
+
+```bash
+# Install avercel globally — it registers both `avercel` AND `vercel` commands
+npm i -g avercel
+
+# That's it! All `vercel` commands now go through avercel's guardrails.
+# The real vercel CLI is bundled inside avercel as a dependency.
+
+# If you had vercel installed separately, clean it up:
+avercel takeover --force
+```
+
+After takeover:
+
+```bash
+vercel ls          # → goes through avercel → forwarded to real vercel internally
+vercel deploy      # → blocked by your config → "❌ Use git push instead"
+echo "val" | vercel env add  # → trailing newline stripped automatically
+```
 
 ## Usage
 
@@ -147,13 +170,14 @@ Token sources (in order):
          ▼
 ┌─────────────────┐
 │   vercel CLI    │
-│  (unmodified)   │
+│  (bundled dep)  │
 └─────────────────┘
 ```
 
-- **Passthrough**: `spawn('vercel', args, { stdio: 'inherit' })` — zero overhead, same experience
+- **Passthrough**: Resolves the bundled vercel binary from `node_modules` and spawns it — zero overhead, same experience
 - **Patched `env add`**: Only intercepts stdin when piped, strips trailing whitespace, forwards to vercel
 - **`env check`**: Calls Vercel API directly, never touches the CLI
+- **Takeover**: `avercel takeover --force` removes standalone vercel and lets avercel own both bin names
 
 ## Why Not Just...
 

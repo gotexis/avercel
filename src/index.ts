@@ -6,6 +6,7 @@ import { checkBlockedEnvs } from './utils/blocked-envs.js';
 import { handleEnvAdd } from './patches/env-add.js';
 import { handleEnvCheck } from './commands/env-check.js';
 import { handleConfigShow } from './commands/config.js';
+import { handleTakeover } from './commands/takeover.js';
 import { passthrough } from './passthrough.js';
 
 async function main(): Promise<void> {
@@ -25,6 +26,12 @@ async function main(): Promise<void> {
 
   const config = loadConfig();
   const command = args[0];
+
+  // Built-in commands (before guards — these should always work)
+  if (command === 'takeover') {
+    const code = await handleTakeover(args.slice(1));
+    process.exit(code);
+  }
 
   // Check disabled commands
   const disabledMsg = isDisabled(command, args, config);
@@ -72,6 +79,7 @@ function printHelp(): void {
   EXTRA COMMANDS:
     env check      Audit env vars for trailing whitespace/newlines
     config [show]  Print active configuration
+    takeover       Replace global \`vercel\` CLI with avercel (--force to run)
 
   GUARDS:
     disabled       Block specific commands with custom messages
@@ -81,7 +89,11 @@ function printHelp(): void {
     .avercel/avercel.yaml  (project-level, takes priority)
     ~/.avercel/avercel.yaml (global fallback)
 
-  Everything else is forwarded to \`vercel\` as-is.
+  TAKEOVER MODE:
+    npm i -g avercel     Installs both \`avercel\` and \`vercel\` commands
+    avercel takeover     Remove standalone vercel, let avercel own both bins
+
+  Everything else is forwarded to the real \`vercel\` CLI (bundled as a dependency).
 `);
 }
 

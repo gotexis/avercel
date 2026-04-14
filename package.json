@@ -4,7 +4,8 @@
   "description": "Agent-Vercel: opinionated Vercel CLI wrapper — patches env quirks, adds env auditing, blocked environments, and command guardrails",
   "main": "dist/index.js",
   "bin": {
-    "avercel": "dist/index.js"
+    "avercel": "dist/index.js",
+    "vercel": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -33,16 +34,9 @@
   "engines": {
     "node": ">=18"
   },
-  "peerDependencies": {
-    "vercel": "*"
-  },
-  "peerDependenciesMeta": {
-    "vercel": {
-      "optional": true
-    }
-  },
   "dependencies": {
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "vercel": "*"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",

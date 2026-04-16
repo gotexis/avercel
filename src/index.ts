@@ -8,23 +8,30 @@ import { handleEnvCheck } from './commands/env-check.js';
 import { handleConfigShow } from './commands/config.js';
 import { handleTakeover } from './commands/takeover.js';
 import { passthrough } from './passthrough.js';
+import { checkLinkGuard } from './guards/link-guard.js';
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-    if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-      printHelp();
-      // Still forward to vercel for its own help
-      if (args.length === 0) {
-        const code = await passthrough(args);
-        process.exit(code);
-      }
-      return;
+  const config = loadConfig();
+
+  // No args: check deploy guard first, then show help + forward
+  if (args.length === 0) {
+    const disabledMsg = isDisabled('', args, config);
+    if (disabledMsg) {
+      console.error(disabledMsg);
+      process.exit(1);
     }
+    printHelp();
+    const code = await passthrough(args);
+    process.exit(code);
   }
 
-  const config = loadConfig();
+  if (args[0] === '--help' || args[0] === '-h') {
+    printHelp();
+    return;
+  }
+
   const command = args[0];
 
   // Built-in commands (before guards — these should always work)
@@ -38,6 +45,12 @@ async function main(): Promise<void> {
   if (disabledMsg) {
     console.error(disabledMsg);
     process.exit(1);
+  }
+
+  // Link guard (warning only)
+  const linkWarning = checkLinkGuard(args);
+  if (linkWarning) {
+    console.error(linkWarning);
   }
 
   // Check blocked environment names

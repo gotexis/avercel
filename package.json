@@ -1,7 +1,7 @@
 {
   "name": "avercel",
-  "version": "0.2.0",
-  "description": "Agent-Vercel: opinionated Vercel CLI wrapper — patches env quirks, adds env auditing, blocked environments, and command guardrails",
+  "version": "0.3.0",
+  "description": "Agent-Vercel: opinionated Vercel CLI wrapper \u2014 patches env quirks, adds env auditing, blocked environments, and command guardrails",
   "main": "dist/index.js",
   "bin": {
     "avercel": "dist/index.js",

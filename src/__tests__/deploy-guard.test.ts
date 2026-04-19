@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { isDisabled, isImplicitDeploy } from '../utils/disabled.js';
 import type { AVercelConfig } from '../config.js';
 
-const IMPLICIT_MSG = '❌ avercel does not support implicit deploy. Use `git push` to deploy via GitHub integration, or run `avercel deploy` explicitly if you really need it.';
+const IMPLICIT_MSG = '❌ agent be-advised — you must use git push to deploy via GitHub integration. !!!DO NOT TRY TO CIRCUMVENT BY USING VERCEL BIN DIRECTLY!!!';
 const DEPLOY_MSG = '🚫 Deploy is disabled.';
 
 function cfg(disabled: Record<string, string> = {}): AVercelConfig {

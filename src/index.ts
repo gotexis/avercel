@@ -4,6 +4,7 @@ import { loadConfig } from './config.js';
 import { isDisabled, isImplicitDeploy } from './utils/disabled.js';
 import { checkBlockedEnvs } from './utils/blocked-envs.js';
 import { handleEnvAdd } from './patches/env-add.js';
+import { handleList } from './patches/list.js';
 import { handleEnvCheck } from './commands/env-check.js';
 import { handleConfigShow } from './commands/config.js';
 import { handleTakeover } from './commands/takeover.js';
@@ -17,7 +18,7 @@ async function main(): Promise<void> {
 
   // No args = implicit deploy → hardcoded block
   if (args.length === 0) {
-    console.error('❌ avercel does not support implicit deploy. Use `git push` to deploy via GitHub integration, or run `avercel deploy` explicitly if you really need it.');
+    console.error('❌ agent be-advised — you must use git push to deploy via GitHub integration. !!!DO NOT TRY TO CIRCUMVENT BY USING VERCEL BIN DIRECTLY!!!');
     process.exit(1);
   }
 
@@ -78,6 +79,11 @@ async function main(): Promise<void> {
     process.exit(code);
   }
 
+  if (args[0] === 'list' || args[0] === 'ls') {
+    const code = await handleList(args.slice(1));
+    process.exit(code);
+  }
+
   // Default: passthrough to vercel
   const code = await passthrough(args);
   process.exit(code);
@@ -89,6 +95,8 @@ function printHelp(): void {
 
   PATCHES:
     env add        Strips trailing whitespace/newlines from piped stdin
+    list / ls      Includes ALL deployment states (Ready, Error, Canceled, etc.)
+                   Default vercel hides errors. Use --ready-only or --legacy to opt out.
 
   EXTRA COMMANDS:
     env check      Audit env vars for trailing whitespace/newlines

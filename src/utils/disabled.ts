@@ -49,7 +49,7 @@ export function isDisabled(
   return null;
 }
 
-const IMPLICIT_DEPLOY_MSG = '❌ avercel does not support implicit deploy. Use `git push` to deploy via GitHub integration, or run `avercel deploy` explicitly if you really need it.';
+const IMPLICIT_DEPLOY_MSG = '❌ agent be-advised — you must use git push to deploy via GitHub integration. !!!DO NOT TRY TO CIRCUMVENT BY USING VERCEL BIN DIRECTLY!!!';
 
 /**
  * Check for implicit deploy forms — HARDCODED block, not config-dependent.

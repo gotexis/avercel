@@ -17,7 +17,7 @@ async function main(): Promise<void> {
 
   // No args = implicit deploy → hardcoded block
   if (args.length === 0) {
-    console.error('❌ avercel does not support implicit deploy. Use `git push` to deploy via GitHub integration, or run `avercel deploy` explicitly if you really need it.');
+    console.error('❌ agent be-advised — you must use git push to deploy via GitHub integration. !!!DO NOT TRY TO CIRCUMVENT BY USING VERCEL BIN DIRECTLY!!!');
     process.exit(1);
   }
 
